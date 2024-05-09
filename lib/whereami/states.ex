@@ -24,12 +24,19 @@ defmodule WhereAmI.States do
       )
 
     features = env.body["features"]
-    state = List.first(features, %{message: "I don't have data for your location."})
-    {:ok, state}
+    {:ok, get_message(List.first(features))}
   end
 
   def get_state_by_location(_) do
     {:ok, %{message: "I don't know where you are."}}
+  end
+
+  defp get_message(%{"attributes" => %{"STATE_NAME" => state_name}}) do
+    %{message: "You are in #{state_name}."}
+  end
+
+  defp get_message(_) do
+    %{message: "I don't have data for your location."}
   end
 
   defimpl String.Chars, for: Map do
